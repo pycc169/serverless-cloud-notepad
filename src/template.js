@@ -19,7 +19,7 @@ const FOOTER = ({ lang, isEdit, updateAt, pw, mode, share, save, autoSave }) => 
                 <button class="opt-save">SUPPORTED_LANG[lang].save</button>
                 ${SWITCHER('Markdown', mode === 'md', 'opt-mode')}
                 ${SWITCHER(SUPPORTED_LANG[lang].share, share, 'opt-share')}
-                ${SWITCHER(SUPPORTED_LANG[lang].autoSave, antoSave, 'opt-antoSave')}
+                ${SWITCHER(SUPPORTED_LANG[lang].autoSave, autoSave, 'opt-autoSave')}
             </div>
             ` : ''
     }

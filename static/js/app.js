@@ -105,25 +105,31 @@ window.addEventListener('DOMContentLoaded', function () {
     renderMarkdown($previewMd, $textarea.value)
 
     if ($textarea) {
-        if($autosaveBtn.checked){    //自动保存
-            $textarea.oninput = throttle(function () {
-            renderMarkdown($previewMd, $textarea.value)
+        // 只在自动保存按钮被选中时设置 oninput 事件
+        if ($autosaveBtn) { // 自动保存
+            const autosaveHandler = throttle(function () {
+                renderMarkdown($previewMd, $textarea.value);
 
-            $loading.style.display = 'inline-block'
-            const data = {t: $textarea.value,}
+                if ($autosaveBtn.checked) { // 检查自动保存开关状态
+                    $loading.style.display = 'inline-block';
+                    const data = { t: $textarea.value };
 
-            window.fetch('', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded',},
-                body: new URLSearchParams(data),
-            })
-                .then(res => res.json())
-                .then(res => {
-                    if (res.err !== 0) {errHandle(res.msg) }
-                })
-                .catch(err => errHandle(err))
-                .finally(() => {$loading.style.display = 'none'})
-            }, 5000)    //5s
+                    window.fetch('', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams(data),
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.err !== 0) { errHandle(res.msg); }
+                    })
+                    .catch(err => errHandle(err))
+                    .finally(() => { $loading.style.display = 'none'; });
+                }
+            }, 5000); // 5s
+
+            // 绑定事件处理器
+            $textarea.oninput = autosaveHandler;
         }
         if($saveBtn){
             $saveBtn.onclick = function(){

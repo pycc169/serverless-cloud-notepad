@@ -11,13 +11,15 @@ const SWITCHER = (text, open, className = '') => `
   <span class="slider round"></span>
 </label>
 `
-const FOOTER = ({ lang, isEdit, updateAt, pw, mode, share }) => `
+const FOOTER = ({ lang, isEdit, updateAt, pw, mode, share, save, autoSave }) => `
     <div class="footer">
         ${isEdit ? `
             <div class="opt">
                 <button class="opt-button opt-pw">${pw ? SUPPORTED_LANG[lang].changePW : SUPPORTED_LANG[lang].setPW}</button>
+                <button class="opt-save">SUPPORTED_LANG[lang].save</button>
                 ${SWITCHER('Markdown', mode === 'md', 'opt-mode')}
                 ${SWITCHER(SUPPORTED_LANG[lang].share, share, 'opt-share')}
+                ${SWITCHER(SUPPORTED_LANG[lang].autoSave, antoSave, 'opt-antoSave')}
             </div>
             ` : ''
     }

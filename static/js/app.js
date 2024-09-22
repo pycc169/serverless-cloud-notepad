@@ -93,7 +93,7 @@ window.addEventListener('DOMContentLoaded', function () {
     const $saveBtn = document.querySelector('.opt-save')    //保存按钮
     const $modeBtn = document.querySelector('.opt-mode > input')
     const $shareBtn = document.querySelector('.opt-share > input')
-    const $autosaveBtn = document.querySelector('.opt-autoSave')        //自动保存选项
+    const $autosaveBtn = document.querySelector('.opt-autoSave > input')        //自动保存选项
     const $previewPlain = document.querySelector('#preview-plain')
     const $previewMd = document.querySelector('#preview-md')
     const $shareModal = document.querySelector('.share-modal')

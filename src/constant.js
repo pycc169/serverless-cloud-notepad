@@ -1,6 +1,6 @@
 // static CDN
 // export const CDN_PREFIX = '//gcore.jsdelivr.net/gh/stockimen/serverless-cloud-notepad@master/static'
-export const CDN_PREFIX = '//cdn.jsdelivr.net/gh/stockimen/serverless-cloud-notepad@master/static'
+export const CDN_PREFIX = 'https://vercel-pro.190699.xyz/cdn.jsdelivr.net/gh/stockimen/serverless-cloud-notepad@master/static'
 // server side salt
 export const SALT = SCN_SALT
 // server side secret

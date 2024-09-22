@@ -128,7 +128,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 .finally(() => {
                     $loading.style.display = 'none'
                 })
-        }, 1000)
+        }, 10000)
     }
 
     if ($pwBtn) {

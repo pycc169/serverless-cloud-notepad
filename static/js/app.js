@@ -90,8 +90,10 @@ window.addEventListener('DOMContentLoaded', function () {
     const $textarea = document.querySelector('#contents')
     const $loading = document.querySelector('#loading')
     const $pwBtn = document.querySelector('.opt-pw')
+    const $saveBtn = document.querySelector('.opt-save')    //保存按钮
     const $modeBtn = document.querySelector('.opt-mode > input')
     const $shareBtn = document.querySelector('.opt-share > input')
+    const $autosaveBtn = document.querySelector('.opt-autoSave')        //自动保存选项
     const $previewPlain = document.querySelector('#preview-plain')
     const $previewMd = document.querySelector('#preview-md')
     const $shareModal = document.querySelector('.share-modal')
@@ -103,32 +105,54 @@ window.addEventListener('DOMContentLoaded', function () {
     renderMarkdown($previewMd, $textarea.value)
 
     if ($textarea) {
-        $textarea.oninput = throttle(function () {
+        if($autosaveBtn){    //自动保存
+            $textarea.oninput = throttle(function () {
             renderMarkdown($previewMd, $textarea.value)
 
             $loading.style.display = 'inline-block'
-            const data = {
-                t: $textarea.value,
-            }
+            const data = {t: $textarea.value,}
 
             window.fetch('', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
+                headers: {'Content-Type': 'application/x-www-form-urlencoded',},
                 body: new URLSearchParams(data),
             })
                 .then(res => res.json())
                 .then(res => {
-                    if (res.err !== 0) {
-                        errHandle(res.msg)
-                    }
+                    if (res.err !== 0) {errHandle(res.msg) }
                 })
                 .catch(err => errHandle(err))
-                .finally(() => {
-                    $loading.style.display = 'none'
+                .finally(() => {$loading.style.display = 'none'})
+            }, 5000)    //5s
+        }
+        if($saveBtn){
+            $saveBtn.onclick = function(){
+                // 禁用按钮
+                $saveBtn.disabled = true;
+                renderMarkdown($previewMd, $textarea.value)
+    
+                $loading.style.display = 'inline-block'
+                const data = {t: $textarea.value,}
+    
+                window.fetch('', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded',},
+                    body: new URLSearchParams(data),
                 })
-        }, 10000)
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.err !== 0) {errHandle(res.msg)}
+                    })
+                    .catch(err => errHandle(err))
+                    .finally(() => {$loading.style.display = 'none'})
+        
+                // 使用 setTimeout 在 3 秒后重新启用按钮
+                setTimeout(function() {
+                    $saveBtn.disabled = false;
+                }, 3000); 
+            }
+        }
+        
     }
 
     if ($pwBtn) {

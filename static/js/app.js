@@ -105,7 +105,7 @@ window.addEventListener('DOMContentLoaded', function () {
     renderMarkdown($previewMd, $textarea.value)
 
     if ($textarea) {
-        if($autosaveBtn){    //自动保存
+        if($autosaveBtn.checked){    //自动保存
             $textarea.oninput = throttle(function () {
             renderMarkdown($previewMd, $textarea.value)
 

@@ -170,17 +170,18 @@ textarea:focus {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* 允许换行 */
 }
 
 .opt {
-    grid-column-start: 1;
-    justify-self: start;
     display: flex;
     align-items: center;
-
     user-select: none;
+    flex: 1; /* 允许扩展 */
+    max-width: 100%; /* 防止超出父元素 */
+    flex-wrap: wrap; /* 允许内部元素换行 */
 }
+
 
 .github-link {
     grid-column-start: 2;

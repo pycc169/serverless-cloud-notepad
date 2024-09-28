@@ -85,7 +85,28 @@ const renderMarkdown = (node, text) => {
         node.innerHTML = DOMPurify.sanitize(parseText)
     }
 }
+// 创建一个通知元素
+const notification = document.createElement('div');
+notification.className = 'notification'; // 添加 CSS 类
+document.body.appendChild(notification);
+// 显示通知的函数
+function showNotification(message) {
+    notification.textContent = message;
 
+    if (notification.classList.contains('show')) {
+        notification.classList.remove('show'); 
+        notification.style.display = 'none'; 
+    }
+    notification.style.display = 'block'; 
+    notification.classList.add('show'); 
+
+    setTimeout(() => {
+        notification.classList.remove('show'); 
+        setTimeout(() => {
+            notification.style.display = 'none'; 
+        }, 500); 
+    }, 3000); 
+}
 window.addEventListener('DOMContentLoaded', function () {
     const $textarea = document.querySelector('#contents')
     const $loading = document.querySelector('#loading')
@@ -125,6 +146,8 @@ window.addEventListener('DOMContentLoaded', function () {
                     })
                     .catch(err => errHandle(err))
                     .finally(() => { $loading.style.display = 'none'; });
+
+                    showNotification('已自动保存');
                 }
             }, 5000); // 5s
 
@@ -151,7 +174,7 @@ window.addEventListener('DOMContentLoaded', function () {
                     })
                     .catch(err => errHandle(err))
                     .finally(() => {$loading.style.display = 'none'})
-        
+                showNotification('已保存');
                 // 使用 setTimeout 在 3 秒后重新启用按钮
                 setTimeout(function() {
                     $saveBtn.disabled = false;

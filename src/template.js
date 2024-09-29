@@ -18,6 +18,9 @@ const FOOTER = ({ lang, isEdit, updateAt, pw, mode, share, save, autoSave }) => 
                 <button class="opt-button opt-pw">${pw ? SUPPORTED_LANG[lang].changePW : SUPPORTED_LANG[lang].setPW}</button>
                 <button class="opt-button opt-save">${SUPPORTED_LANG[lang].save}</button>
                 ${SWITCHER('Markdown', mode === 'md', 'opt-mode')}
+                
+            </div>
+            <div class="opt">  
                 ${SWITCHER(SUPPORTED_LANG[lang].share, share, 'opt-share')}
                 ${SWITCHER(SUPPORTED_LANG[lang].autoSave, true, 'opt-autoSave')}
             </div>

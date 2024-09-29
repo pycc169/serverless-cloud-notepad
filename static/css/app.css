@@ -128,7 +128,7 @@ textarea:focus {
 }
 
 .stack .layer_1 .layer_2 .layer_3 .contents {
-    height: calc(95vh - 120px);
+    height: calc(100vh - 120px);
     width: 100%;
     margin: 0;
     padding: 0 6px 0 0;
@@ -142,20 +142,40 @@ textarea:focus {
     line-height: 20px;
     color: #3a3b3c;
 }
+
 @media (max-width: 480px) {
     .note-container {
-        padding: 12px 30px 0 30px;
-        max-height: 75%;
+        /*padding: 12px 30px 0 30px;
+        max-height: 75%;*/
+    }
+    .stack .layer_1 .layer_2 .layer_3 {
+        padding: 20px 20px 30px 20px;
     }
     .stack .layer_1 .layer_2 .layer_3 .contents {
         height: calc(75vh);
     }
     .footer {
-        min-height: 15vh;
+        position: relative;
+        /*bottom: 24px;
+        box-sizing: border-box;
+        padding: 10px 30px;
+        width: 100%;*/
+        min-height: 10vh;
+        /*display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        max-width: 100%;
+        flex-wrap: wrap; */
     }
 
     .opt {
-
+        /*display: flex;
+        align-items: center;
+        user-select: none;
+        justify-content: flex-start;
+        flex: 1; 
+        max-width: 100%; */
+/*        padding: 10px;*/
     }
 }
 
@@ -179,11 +199,11 @@ textarea:focus {
 
 .footer {
     position: absolute;
-    bottom: 12px;
+    bottom: 24px;
     box-sizing: border-box;
-    padding: 0 30px;
+    padding: 10px 30px;
     width: 100%;
-    height: 60px;
+    height: 26px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -210,8 +230,9 @@ textarea:focus {
 }
 
 .last-modified {
-    grid-column-start: 3;
-    justify-self: end;
+    position: absolute;
+    z-index: 2000;
+    margin-bottom: 30px;
 }
 
 .github-link:hover {

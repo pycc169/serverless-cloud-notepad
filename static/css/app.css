@@ -149,7 +149,7 @@ textarea:focus {
         max-height: 75%;*/
     }
     .stack .layer_1 .layer_2 .layer_3 {
-        padding: 20px 20px 30px 20px;
+        padding: 20px 20px 20px 20px;
     }
     .stack .layer_1 .layer_2 .layer_3 .contents {
         height: calc(75vh);
@@ -230,9 +230,11 @@ textarea:focus {
 }
 
 .last-modified {
-    position: absolute;
+    /*position: absolute;
     z-index: 2000;
-    margin-bottom: 30px;
+    margin-bottom: 30px;*/
+    grid-column-start: 3;
+    justify-self: end;
 }
 
 .github-link:hover {

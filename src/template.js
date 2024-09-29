@@ -57,7 +57,7 @@ const HTML = ({ lang, title, content, ext = {}, tips, isEdit, showPwPrompt }) =>
     <title>${title} — Cloud Notepad</title>
     <link href="${CDN_PREFIX}/favicon.ico" rel="shortcut icon" type="image/ico" />
     <!-- <link href="${CDN_PREFIX}/css/app.min.css" rel="stylesheet" media="screen" /> -->
-    <link href="${CDN_PREFIX}/css/app.css" rel="stylesheet" media="screen" />
+    <link href="${CDN_PREFIX}/css/app.0.css" rel="stylesheet" media="screen" />
 </head>
 <body>
     <div class="note-container">

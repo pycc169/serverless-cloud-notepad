@@ -24,6 +24,8 @@ const FOOTER = ({ lang, isEdit, updateAt, pw, mode, share, save, autoSave }) => 
                 ${SWITCHER(SUPPORTED_LANG[lang].share, share, 'opt-share')}
                 ${SWITCHER(SUPPORTED_LANG[lang].autoSave, true, 'opt-autoSave')}
             </div>
+            <div class="opt"> </div>
+            <div class="opt"> </div>
             <div class="opt"> 
             </div>
 

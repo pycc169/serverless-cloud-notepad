@@ -184,31 +184,47 @@ window.addEventListener('DOMContentLoaded', function () {
         
     }
 
-    if ($pwBtn) {
-        $pwBtn.onclick = function () {
-            const passwd = window.prompt(getI18n('enpw'))
-            if (passwd == null) return;
+    // 保存功能
+    const saveContent = () => {
+        // 禁用按钮
+        $saveBtn.disabled = true;
+        renderMarkdown($previewMd, $textarea.value)
 
-            const path = window.location.pathname
-            window.fetch(`${path}/pw`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    passwd: passwd.trim(),
-                }),
+        $loading.style.display = 'inline-block'
+        const data = { t: $textarea.value }
+
+        window.fetch('', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(data),
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.err !== 0) { errHandle(res.msg) }
             })
-                .then(res => res.json())
-                .then(res => {
-                    if (res.err !== 0) {
-                        return errHandle(res.msg)
-                    }
-                    alert(passwd ? getI18n('pwss') : getI18n('pwrs'))
-                })
-                .catch(err => errHandle(err))
-        }
+            .catch(err => errHandle(err))
+            .finally(() => {
+                $loading.style.display = 'none';
+                showNotification('已保存');
+                // 使用 setTimeout 在 3 秒后重新启用按钮
+                setTimeout(function () {
+                    $saveBtn.disabled = false;
+                }, 3000);
+            });
+    };
+
+    if ($saveBtn) {
+        $saveBtn.onclick = saveContent;
     }
+
+    // 添加键盘事件监听器
+    window.addEventListener('keydown', function (event) {
+        // 检查是否按下 Ctrl + S
+        if (event.ctrlKey && event.key === 's') {
+            event.preventDefault(); // 防止默认的保存行为
+            saveContent(); // 调用保存功能
+        }
+    });
 
     if ($modeBtn) {
         $modeBtn.onclick = function (e) {

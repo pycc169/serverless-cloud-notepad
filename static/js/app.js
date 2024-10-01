@@ -149,7 +149,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
                     showNotification('已自动保存');
                 }
-            }, 5000); // 5s
+            }, 15000); // 15s
 
             // 绑定事件处理器
             $textarea.oninput = autosaveHandler;

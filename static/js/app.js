@@ -126,105 +126,130 @@ window.addEventListener('DOMContentLoaded', function () {
     renderMarkdown($previewMd, $textarea.value)
 
     if ($textarea) {
-        // 只在自动保存按钮被选中时设置 oninput 事件
-        if ($autosaveBtn) { // 自动保存
-            const autosaveHandler = throttle(function () {
-                renderMarkdown($previewMd, $textarea.value);
-
-                if ($autosaveBtn.checked) { // 检查自动保存开关状态
-                    $loading.style.display = 'inline-block';
-                    const data = { t: $textarea.value };
-
-                    window.fetch('', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams(data),
-                    })
-                    .then(res => res.json())
-                    .then(res => {
-                        if (res.err !== 0) { errHandle(res.msg); }
-                    })
-                    .catch(err => errHandle(err))
-                    .finally(() => { $loading.style.display = 'none'; });
-
-                    showNotification('已自动保存');
-                }
-            }, 15000); // 15s
-
-            // 绑定事件处理器
-            $textarea.oninput = autosaveHandler;
-        }
-        if($saveBtn){
-            $saveBtn.onclick = function(){
-                // 禁用按钮
-                $saveBtn.disabled = true;
-                renderMarkdown($previewMd, $textarea.value)
+      let autosaveTimeout;
+      let isSaved = true; // 标志变量，表示文档是否已保存
+      let lastSavedContent = $textarea.value; // 记录最后一次保存的内容
     
-                $loading.style.display = 'inline-block'
-                const data = {t: $textarea.value,}
+      // 自动保存函数
+      const autosave = () => {
+          if ($autosaveBtn.checked && !isSaved) { // 检查自动保存开关状态和文档是否已保存
+              saveContent();
+              showNotification('已自动保存');
+          }
+          // 重新设置自动保存计时器
+          autosaveTimeout = setTimeout(autosave, 15000); // 15秒
+      };
     
-                window.fetch('', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded',},
-                    body: new URLSearchParams(data),
-                })
-                    .then(res => res.json())
-                    .then(res => {
-                        if (res.err !== 0) {errHandle(res.msg)}
-                    })
-                    .catch(err => errHandle(err))
-                    .finally(() => {$loading.style.display = 'none'})
-                showNotification('已保存');
-                // 使用 setTimeout 在 3 秒后重新启用按钮
-                setTimeout(function() {
-                    $saveBtn.disabled = false;
-                }, 3000); 
-            }
-        }
-        
+      // 只在自动保存按钮被选中时设置 oninput 事件
+      if ($autosaveBtn) {
+          // 绑定事件处理器
+          $textarea.oninput = () => {
+              renderMarkdown($previewMd, $textarea.value);
+              isSaved = false; // 文档已修改，更新标志变量
+              // 重置自动保存计时器
+              clearTimeout(autosaveTimeout);
+              autosaveTimeout = setTimeout(autosave, 15000); // 15秒
+          };
+      }
+    
+      if ($saveBtn) {
+          $saveBtn.onclick = () => {
+              if ($textarea.value !== lastSavedContent) {
+                  saveContent();
+              } else {
+                  alert('文档未修改');
+              }
+          };
+      }
     }
 
     // 保存功能
     const saveContent = () => {
-        // 禁用按钮
-        $saveBtn.disabled = true;
-        renderMarkdown($previewMd, $textarea.value)
-
-        $loading.style.display = 'inline-block'
-        const data = { t: $textarea.value }
-
-        window.fetch('', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(data),
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.err !== 0) { errHandle(res.msg) }
-            })
-            .catch(err => errHandle(err))
-            .finally(() => {
-                $loading.style.display = 'none';
-                showNotification('已保存');
-                // 使用 setTimeout 在 3 秒后重新启用按钮
-                setTimeout(function () {
-                    $saveBtn.disabled = false;
-                }, 3000);
-            });
+      // 禁用按钮
+      $saveBtn.disabled = true;
+      renderMarkdown($previewMd, $textarea.value);
+    
+      $loading.style.display = 'inline-block';
+      const data = { t: $textarea.value };
+    
+      window.fetch('', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(data),
+      })
+      .then(res => res.json())
+      .then(res => {
+          if (res.err !== 0) { errHandle(res.msg); }
+      })
+      .catch(err => errHandle(err))
+      .finally(() => {
+          $loading.style.display = 'none';
+          showNotification('已保存');
+          isSaved = true; // 更新标志变量
+          lastSavedContent = $textarea.value; // 更新最后一次保存的内容
+          // 使用 setTimeout 在 3 秒后重新启用按钮
+          setTimeout(function () {
+              $saveBtn.disabled = false;
+          }, 3000);
+      });
     };
-
-    if ($saveBtn) {
-        $saveBtn.onclick = saveContent;
+    
+    // 添加键盘事件监听器
+    const throttleCtrlS = throttle(function () {
+      if ($textarea.value !== lastSavedContent) {
+          saveContent();
+      } else {
+          alert('文档未修改');
+      }
+    }, 3000);
+    
+    window.addEventListener('keydown', function (event) {
+      // 检查是否按下 Ctrl + S
+      if (event.ctrlKey && event.key === 's') {
+          event.preventDefault(); // 防止默认的保存行为
+          throttleCtrlS(); // 调用节流后的保存功能
+      }
+    });
+    
+    // 节流函数
+    function throttle(func, limit) {
+      let inThrottle;
+      return function () {
+          const args = arguments;
+          const context = this;
+          if (!inThrottle) {
+              func.apply(context, args);
+              inThrottle = true;
+              setTimeout(() => inThrottle = false, limit);
+          }
+      };
     }
 
-    // 添加键盘事件监听器
-    window.addEventListener('keydown', function (event) {
-        // 检查是否按下 Ctrl + S
-        if (event.ctrlKey && event.key === 's') {
-            event.preventDefault(); // 防止默认的保存行为
-            saveContent(); // 调用保存功能
+    if ($pwBtn) {
+        $pwBtn.onclick = function () {
+            const passwd = window.prompt(getI18n('enpw'))
+            if (passwd == null) return;
+
+            const path = window.location.pathname
+            window.fetch(`${path}/pw`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    passwd: passwd.trim(),
+                }),
+            })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.err !== 0) {
+                        return errHandle(res.msg)
+                    }
+                    alert(passwd ? getI18n('pwss') : getI18n('pwrs'))
+                })
+                .catch(err => errHandle(err))
         }
-    });
+    }
 
     if ($modeBtn) {
         $modeBtn.onclick = function (e) {

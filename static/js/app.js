@@ -125,38 +125,8 @@ window.addEventListener('DOMContentLoaded', function () {
     renderPlain($previewPlain, $textarea.value)
     renderMarkdown($previewMd, $textarea.value)
 
-    if ($textarea) {
-    // 只在自动保存按钮被选中时设置 oninput 事件
-        if ($autosaveBtn) { // 自动保存
-            const autosaveHandler = throttle(function () {
-                renderMarkdown($previewMd, $textarea.value);
-                if ($autosaveBtn.checked) { // 检查自动保存开关状态
-                    $loading.style.display = 'inline-block';
-                    const data = { t: $textarea.value };
-                    window.fetch('', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams(data),
-                    })
-                    .then(res => res.json())
-                    .then(res => {
-                        if (res.err !== 0) { errHandle(res.msg); }
-                    })
-                    .catch(err => errHandle(err))
-                    .finally(() => { $loading.style.display = 'none'; });
-                    showNotification('已自动保存');
-                }
-            }, 15000); // 15s
-            // 绑定事件处理器
-            $textarea.oninput = autosaveHandler;
-        }
-        if ($saveBtn) {
-            $saveBtn.onclick = saveContent;
-        }
-    }
     // 保存功能
     const saveContent = () => {
-        // 禁用按钮
         $saveBtn.disabled = true;
         renderMarkdown($previewMd, $textarea.value);
         $loading.style.display = 'inline-block';
@@ -180,19 +150,44 @@ window.addEventListener('DOMContentLoaded', function () {
                 }, 3000);
             });
     };
+
+    if ($textarea) {
+    // 只在自动保存按钮被选中时设置 oninput 事件
+        if ($autosaveBtn) { 
+            const autosaveHandler = throttle(function () {
+                renderMarkdown($previewMd, $textarea.value);
+                if ($autosaveBtn.checked) { 
+                    $loading.style.display = 'inline-block';
+                    const data = { t: $textarea.value };
+                    window.fetch('', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams(data),
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.err !== 0) { errHandle(res.msg); }
+                    })
+                    .catch(err => errHandle(err))
+                    .finally(() => { $loading.style.display = 'none'; });
+                    showNotification('已自动保存');
+                }
+            }, 15000); 
+            $textarea.oninput = autosaveHandler;
+        }
+        if ($saveBtn) {
+            $saveBtn.onclick = saveContent;
+        }
+    }
     
-        
-    let lastSaveTime = 0; // 记录上次保存的时间
-    // 添加键盘事件监听器
+    let lastSaveTime = 0; 
     window.addEventListener('keydown', function (event) {
-       // 检查是否按下 Ctrl + S
        if (event.ctrlKey && event.key === 's') {
-           event.preventDefault(); // 防止默认的保存行为
-     
-           const currentTime = Date.now(); // 获取当前时间
-           if (currentTime - lastSaveTime >= 3000) { // 检查是否已过3秒
-               saveContent(); // 调用保存功能
-               lastSaveTime = currentTime; // 更新上次保存时间
+           event.preventDefault(); 
+           const currentTime = Date.now(); 
+           if (currentTime - lastSaveTime >= 3000) { 
+               saveContent(); 
+               lastSaveTime = currentTime; 
            }
        }
     });

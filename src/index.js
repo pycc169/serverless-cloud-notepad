@@ -14,6 +14,57 @@ router.get('/', ({ url }) => {
     return Response.redirect(`${url}${newHash}`, 302)
 })
 
+// 处理 /list 路由
+router.get('/list', async () => {
+    const keys = await NOTES.list() // 获取所有笔记的键
+
+    // 生成表格行，每行显示每个键的所有字段信息
+    const rows = keys.keys.map(key => `
+      <tr>
+        <td><a href="/${key.name}">${key.name}</a></td>
+        <td>${key.metadata ? (() => {
+            const date = new Date(key.metadata.updateAt * 1000);
+            const pad = num => num.toString().padStart(2, '0');
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+        })() : 'N/A'}
+        </td>
+      </tr>
+    `).join('<br>')
+
+    // 生成包含表格的HTML
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Note List</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+            th { background-color: #f4f4f4; }
+          </style>
+        </head>
+        <body>
+          <h1>Note List</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Note Link</th>
+                <th>Modify Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows}
+            </tbody>
+          </table>
+        </body>
+      </html>`
+
+    return new Response(html, {
+        headers: { 'Content-Type': 'text/html' },
+    })
+})
+
 router.get('/share/:md5', async (request) => {
     const lang = getI18n(request)
     const { md5 } = request.params

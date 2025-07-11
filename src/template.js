@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { CDN_PREFIX, SUPPORTED_LANG } from './constant'
 
-dayjs。extend(relativeTime)
+dayjs.extend(relativeTime)
 
 const SWITCHER = (text, open, className = '') => `
 <span class="opt-desc">${text}</span>
@@ -16,13 +16,14 @@ const FOOTER = ({ lang, isEdit, updateAt, pw, mode, share, save, autoSave }) => 
         ${isEdit ? `
             <div class="opt">
                 <button class="opt-button opt-pw">${pw ? SUPPORTED_LANG[lang].changePW : SUPPORTED_LANG[lang].setPW}</button>
-                <button class="opt-button opt-save">${SUPPORTED_LANG[lang]。save}</button>
-                ${SWITCHER('Markdown'， mode === 'md', 'opt-mode')}
+    
+                ${SWITCHER('Markdown', mode === 'md', 'opt-mode')}
                 
             </div>
             <div class="opt">  
-                ${SWITCHER(SUPPORTED_LANG[lang]。share, share, 'opt-share')}
-                ${SWITCHER(SUPPORTED_LANG[lang]。autoSave, false, 'opt-autoSave')}
+                ${SWITCHER(SUPPORTED_LANG[lang].share, share, 'opt-share')}
+                ${SWITCHER(SUPPORTED_LANG[lang].autoSave, false, 'opt-autoSave')}
+                <button class="opt-button opt-save">${SUPPORTED_LANG[lang].save}</button>
             </div>
             <div class="opt"> </div>
             <div class="opt"> </div>

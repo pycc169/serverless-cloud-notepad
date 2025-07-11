@@ -2,7 +2,7 @@ name = "cloud-notepad"
 main = "src/index.js"
 compatibility_date = "2022-05-13"
 
-account_id = "152e41c0a76e0d99ca60319aabecd2d7"  # 替换为你的账户 ID
+
 kv_namespaces = [
   { binding = "NOTES", id = "e262fa820aa84c4ab0d35863614d4248" },
   { binding = "SHARE", id = "eec978120acb43d5a7db20b6e508bf36" }

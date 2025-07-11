@@ -77,7 +77,12 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          
+          secrets: |
+            SCN_SALT
+            SCN_SECRET
+        env:
+          SCN_SALT: ${{ secrets.SCN_SALT }}
+          SCN_SECRET: ${{ secrets.SCN_SECRET }}
       - name: Output deployment URL
         env:
           DEPLOYMENT_URL: ${{ steps.deploy_to_cf.outputs.deployment-url }}

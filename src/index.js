@@ -16,53 +16,73 @@ router.get('/', ({ url }) => {
 
 // 处理 /list 路由
 router.get('/list', async () => {
-    const keys = await NOTES.list() // 获取所有笔记的键
-
-    // 生成表格行，每行显示每个键的所有字段信息
-    const rows = keys.keys.map(key => `
+  const keys = await NOTES.list()
+  
+  const rows = keys.keys.map(key => {
+    const updateAt = key.metadata?.updateAt
+    const timestamp = updateAt ? updateAt * 1000 : null
+    
+    return `
       <tr>
         <td><a href="/${key.name}">${key.name}</a></td>
-        <td>${key.metadata ? (() => {
-            const date = new Date(key.metadata.updateAt * 1000);
-            const pad = num => num.toString().padStart(2, '0');
-            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-        })() : 'N/A'}
-        </td>
+        <td data-timestamp="${timestamp || ''}">${timestamp ? 'Loading...' : 'N/A'}</td>
       </tr>
-    `).join('<br>')
-
-    // 生成包含表格的HTML
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Note List</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
-            th { background-color: #f4f4f4; }
-          </style>
-        </head>
-        <body>
-          <h1>Note List</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>Note Link</th>
-                <th>Modify Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows}
-            </tbody>
-          </table>
-        </body>
-      </html>`
-
-    return new Response(html, {
-        headers: { 'Content-Type': 'text/html' },
-    })
+    `
+  }).join('')
+  
+  // 修改 HTML，添加 JavaScript 代码
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Note List</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+          th { background-color: #f4f4f4; }
+        </style>
+      </head>
+      <body>
+        <h1>Note List</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>Note Link</th>
+              <th>Modify Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+        
+        <script>
+          // 在浏览器中格式化时间为本地时区（或指定时区）
+          document.querySelectorAll('td[data-timestamp]').forEach(cell => {
+            const timestamp = cell.getAttribute('data-timestamp')
+            if (timestamp) {
+              const date = new Date(parseInt(timestamp))
+              // 使用浏览器默认时区（或指定为 Asia/Shanghai）
+              const formatter = new Intl.DateTimeFormat('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'Asia/Shanghai'
+              })
+              cell.textContent = formatter.format(date)
+            }
+          })
+        </script>
+      </body>
+    </html>`
+  
+  return new Response(html, {
+    headers: { 'Content-Type': 'text/html' },
+  })
 })
 
 router.get('/share/:md5', async (request) => {

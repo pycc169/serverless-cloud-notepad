@@ -237,12 +237,18 @@ router.post('/:path', async request => {
     // const { metadata } = await queryNote(path)
 
     try {
-        await NOTES.put(path, content, {
-            metadata: {
-                ...metadata,
-                updateAt: dayjs().unix(),
-            },
-        })
+         if (content?.trim()){
+            // 有值修改
+            await NOTES.put(path, content, {
+                metadata: {
+                    ...metadata,
+                    updateAt: dayjs().unix(),
+                },
+            })
+        }else{
+            // 无值删除
+            await NOTES.delete(path)
+        }
 
         return returnJSON(0)
     } catch (error) {

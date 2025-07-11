@@ -2,8 +2,7 @@ name = "cloud-notepad"
 main = "src/index.js"
 compatibility_date = "2022-05-13"
 
-
 kv_namespaces = [
-  { binding = "NOTES", id = "b7a99bfc49f84588971fe01" },
-  { binding = "SHARE", id = "0c2614e711804b9aa2e37ab" }
+  { binding = "NOTES", id = "<NOTES_KV_BINDING_ID>" },
+  { binding = "SHARE", id = "<SHARE_KV_BINDING_ID>" }
 ]
